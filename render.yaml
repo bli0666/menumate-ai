@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: menumate-ai
+    runtime: python
+    plan: free
+    startCommand: python3 app.py
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false

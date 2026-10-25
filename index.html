@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>MenuMate AI V3</title>
+<style>
+:root{
+  --bg:#f4f5f7;--card:#fff;--text:#17191c;--muted:#68717c;--line:#e1e5e8;
+  --accent:#176e5b;--accent2:#e6f3ef;--danger:#a62222;--dangerbg:#fdeaea;
+  --warn:#7b5200;--warnbg:#fff2d3;--good:#246a3c;--goodbg:#e7f6ec;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#e9edef;color:var(--text)}
+.app{width:min(440px,100%);min-height:100vh;margin:auto;background:var(--bg);box-shadow:0 0 34px #00000012;position:relative}
+.screen{display:none;min-height:100vh;padding:22px 18px 104px}.screen.active{display:block}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;font-size:20px;margin-bottom:20px}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--accent);color:#fff;display:grid;place-items:center}.ver{font-size:10px;background:#1b1d20;color:#fff;border-radius:999px;padding:4px 7px;margin-left:auto}
+h1{font-size:30px;line-height:1.08;letter-spacing:-.035em;margin:3px 0 9px}h2{font-size:20px;margin:0 0 9px}h3{font-size:15px;margin:0 0 7px}
+p{line-height:1.48;margin:0 0 10px}.muted{color:var(--muted);font-size:14px}.tiny{font-size:11px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin:13px 0}
+label.field{display:block;font-size:12px;font-weight:800;color:#4f5965;text-transform:uppercase;letter-spacing:.06em;margin:15px 0 7px}
+input{font:inherit}.textinput{width:100%;border:1px solid var(--line);border-radius:13px;background:#fff;padding:12px 13px;outline:none}
+.tag-editor{display:flex;gap:7px}.tag-editor input{flex:1}.addbtn{border:0;border-radius:12px;background:var(--accent2);color:#154c40;font-weight:800;padding:0 14px;cursor:pointer}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.tag{background:#eef2f3;border:1px solid #dfe5e7;border-radius:999px;padding:7px 9px;font-size:12px;display:flex;align-items:center;gap:7px}.tag button{border:0;background:transparent;color:#7c858f;padding:0;cursor:pointer;font-size:15px}
+.btn{width:100%;border:0;border-radius:14px;padding:14px 15px;font-weight:850;font-size:15px;cursor:pointer;background:var(--accent);color:#fff;margin-top:12px}.btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+.back{border:0;background:transparent;font-size:24px;padding:0 0 10px;cursor:pointer}
+.statusbar{font-size:12px;padding:9px 11px;border-radius:11px;margin:11px 0;background:#eef1f3;color:#59626e}.statusbar.ok{background:var(--goodbg);color:var(--good)}.statusbar.bad{background:var(--dangerbg);color:var(--danger)}
+.upload{border:2px dashed #cdd4d9;border-radius:20px;background:#fff;min-height:330px;padding:18px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;cursor:pointer}.upload img{max-width:100%;max-height:330px;border-radius:13px;display:none}.camera{font-size:54px}input[type=file]{display:none}
+.notice{font-size:11px;color:var(--muted);line-height:1.5;margin-top:11px}.errorbox{background:var(--dangerbg);color:var(--danger);border-radius:14px;padding:12px;margin:12px 0;font-size:13px;display:none}
+.loading{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.spinner{width:72px;height:72px;border-radius:50%;border:7px solid #dbe5e2;border-top-color:var(--accent);animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{to{transform:rotate(360deg)}}.progress{width:100%;text-align:left;margin-top:24px}.progress div{padding:10px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}.progress div.active{color:var(--text);font-weight:800}
+.previewSmall{width:100%;max-height:180px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px;margin:10px 0 4px}
+.summary{background:var(--accent2);border-radius:16px;padding:14px;margin:14px 0;color:#17493f}
+.mealLabel{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:7px}
+.dish{cursor:pointer}.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.rank{width:30px;height:30px;border-radius:10px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:850;flex:none}.title{font-size:18px;font-weight:850}.original{font-size:13px;color:var(--muted);margin-top:2px}.price{font-weight:800;white-space:nowrap}
+.badge{display:inline-block;border-radius:999px;padding:6px 8px;font-size:11px;font-weight:800;background:#eef1f3;margin:8px 4px 0 0}.badge.high{background:var(--goodbg);color:var(--good)}.badge.medium{background:var(--warnbg);color:var(--warn)}.badge.low{background:var(--dangerbg);color:var(--danger)}
+.alert{border-radius:13px;padding:12px;font-size:13px;line-height:1.45;margin-top:10px}.alert.warn{background:var(--warnbg);color:var(--warn)}.alert.good{background:var(--goodbg);color:var(--good)}
+.list{padding-left:20px;margin:8px 0}.list li{margin:5px 0;font-size:13px;line-height:1.4}
+.menuRead{max-height:280px;overflow:auto}.readItem{padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.readItem:last-child{border:0}.readName{font-weight:800}
+.floating{position:fixed;z-index:20;bottom:18px;left:50%;transform:translateX(-50%);width:min(400px,calc(100% - 34px));border:0;border-radius:15px;padding:14px;background:var(--accent);color:#fff;font-weight:850;font-size:15px;box-shadow:0 8px 28px #176e5b38;cursor:pointer}
+.chatlog{display:flex;flex-direction:column;gap:9px;margin:16px 0 120px}.bubble{max-width:86%;padding:11px 13px;border-radius:16px;font-size:13px;line-height:1.5}.bubble.ai{background:#fff;border:1px solid var(--line);align-self:flex-start}.bubble.user{background:var(--accent);color:#fff;align-self:flex-end}.composer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(440px,100%);padding:11px 14px 15px;background:#f4f5f7f5;border-top:1px solid var(--line);display:flex;gap:7px;z-index:30}.composer input{flex:1;border:1px solid var(--line);border-radius:12px;padding:11px}.composer button{border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:850;padding:0 14px}
+details{margin-top:12px}summary{cursor:pointer;font-weight:800;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="profile" class="screen active">
+  <div class="brand"><div class="logo">M</div>MenuMate AI <span class="ver">V3.2 LIVE</span></div>
+  <h1>Build your food profile.</h1>
+  <p class="muted">The AI will analyze your uploaded menu and explain recommendations in your mother language.</p>
+  <div id="apiStatus" class="statusbar">Checking AI connection…</div>
+  <div class="card">
+    <label class="field">Name</label>
+    <input id="name" class="textinput" value="John" placeholder="Your name">
+    <label class="field">Mother language</label>
+    <input id="language" class="textinput" list="languages" value="English" placeholder="e.g. Chinese">
+    <datalist id="languages"><option value="English"><option value="Chinese"><option value="Spanish"><option value="French"><option value="Korean"><option value="Japanese"><option value="Arabic"></datalist>
+    <div id="editors"></div>
+    <button class="btn secondary" onclick="clearProfile()">Clear demo profile</button>
+  </div>
+  <button class="btn" onclick="saveProfileAndGo()">Continue to Menu Scan</button>
+  <p class="notice">For severe allergies, always confirm ingredients and cross-contact directly with restaurant staff.</p>
+</section>
+
+<section id="scan" class="screen">
+  <button class="back" onclick="go('profile')">←</button>
+  <h1>Upload your actual menu.</h1>
+  <p class="muted">V3.2 analyzes only the actual menu image you upload. Keep the local Terminal backend running while you use the app.</p>
+  <label class="upload" for="menuFile">
+    <div id="uploadPrompt"><div class="camera">📷</div><h2>Choose a menu photo</h2><p class="muted">Choose the actual menu photo (JPG/PNG), not a screenshot of the folder that contains the menu files.</p></div>
+    <img id="preview" alt="Uploaded menu preview">
+  </label>
+  <input id="menuFile" type="file" accept="image/*">
+  <div id="scanError" class="errorbox"></div>
+  <button class="btn" onclick="analyzeMenu()">Analyze My Uploaded Menu</button>
+</section>
+
+<section id="loading" class="screen">
+  <div class="loading">
+    <div class="spinner"></div>
+    <h1>Reading your uploaded menu…</h1>
+    <p class="muted">Step 1 transcribes the actual image. Step 2 recommends only from those extracted items.</p>
+    <div class="progress">
+      <div id="p1" class="active">Reading visible dishes and prices from your image</div>
+      <div id="p2">Translating menu items</div>
+      <div id="p3">Comparing with your profile</div>
+      <div id="p4">Building a diverse appetizer / main / drink meal</div>
+    </div>
+  </div>
+</section>
+
+<section id="results" class="screen">
+  <button class="back" onclick="go('scan')">←</button>
+  <h1>Your recommended meal</h1>
+  <p class="muted">These recommendations come from the menu image shown below.</p>
+  <img id="resultPreview" class="previewSmall" alt="Your uploaded menu">
+  <div id="overall" class="summary"></div>
+  <div id="resultCards"></div>
+
+  <details class="card">
+    <summary>What AI actually read from your uploaded menu</summary>
+    <div id="menuRead" class="menuRead"></div>
+  </details>
+
+  <details class="card">
+    <summary>Important risks & limitations</summary>
+    <div id="riskNotes"></div>
+  </details>
+
+  <button class="floating" onclick="openChat()">Ask AI About This Menu</button>
+</section>
+
+<section id="detail" class="screen">
+  <button class="back" onclick="go('results')">←</button>
+  <div id="detailBody"></div>
+  <button class="btn" onclick="openChat()">Ask AI About This Dish</button>
+</section>
+
+<section id="chat" class="screen">
+  <button class="back" onclick="go('results')">←</button>
+  <h1>AI Food Assistant</h1>
+  <p class="muted">The assistant uses your uploaded menu extraction, not a sample menu.</p>
+  <div id="chatlog" class="chatlog"></div>
+  <div class="composer">
+    <input id="chatInput" placeholder="Ask about your menu…" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">Send</button>
+  </div>
+</section>
+
+</div>
+<script>
+const screens=['profile','scan','loading','results','detail','chat'];
+let currentProfile=null,imageDataURL=null,currentAnalysis=null,backendReady=false;
+const editorDefs=[
+ ['allergies','Allergies','e.g. Peanuts — severe'],
+ ['health_conditions','Health conditions','e.g. Type 2 Diabetes'],
+ ['dietary_restrictions','Dietary restrictions','e.g. Vegetarian'],
+ ['flavor_preferences','Flavor preferences','e.g. Mild, savory'],
+ ['food_dislikes','Foods you dislike','e.g. Cilantro'],
+ ['food_taboos','Religious / cultural / lifestyle restrictions','e.g. No pork']
+];
+const initial={
+ allergies:['Peanuts — severe','Shellfish — severe','Soy — severe'],
+ health_conditions:['Type 2 Diabetes','High Cholesterol','High Blood Pressure','Fatty Liver'],
+ dietary_restrictions:[],flavor_preferences:['Mild flavors','Chicken','Pasta'],
+ food_dislikes:['Very spicy food'],food_taboos:[]
+};
+function makeEditors(){
+ const host=document.getElementById('editors');
+ editorDefs.forEach(([key,label,placeholder])=>{
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`<label class="field">${label}</label><div class="tag-editor"><input id="${key}_input" class="textinput" placeholder="${placeholder}"><button class="addbtn" type="button" onclick="addTag('${key}')">Add</button></div><div id="${key}_tags" class="tags"></div>`;
+  host.appendChild(wrap);
+  document.getElementById(`${key}_input`).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addTag(key)}});
+ });
+ Object.entries(initial).forEach(([k,v])=>v.forEach(x=>appendTag(k,x)));
+}
+function appendTag(key,value){const t=(value||'').trim();if(!t)return;const tag=document.createElement('span');tag.className='tag';tag.dataset.value=t;const s=document.createElement('span');s.textContent=t;const x=document.createElement('button');x.type='button';x.textContent='×';x.onclick=()=>tag.remove();tag.append(s,x);document.getElementById(`${key}_tags`).appendChild(tag)}
+function addTag(key){const i=document.getElementById(`${key}_input`);appendTag(key,i.value);i.value='';i.focus()}
+function getTags(key){return [...document.querySelectorAll(`#${key}_tags .tag`)].map(x=>x.dataset.value)}
+function clearProfile(){editorDefs.forEach(([k])=>document.getElementById(`${k}_tags`).innerHTML='');document.getElementById('name').value='';document.getElementById('language').value=''}
+function collectProfile(){const p={name:document.getElementById('name').value.trim()||'User',mother_language:document.getElementById('language').value.trim()||'English'};editorDefs.forEach(([k])=>p[k]=getTags(k));return p}
+function saveProfileAndGo(){currentProfile=collectProfile();go('scan')}
+function go(id){screens.forEach(s=>document.getElementById(s).classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+async function checkAPI(){
+ const box=document.getElementById('apiStatus');
+ if(location.protocol==='file:'){
+   backendReady=false;
+   box.className='statusbar bad';
+   box.textContent='Backend disconnected: do not open index.html directly. Double-click start.command and use the localhost page it opens.';
+   return;
+ }
+ try{
+   const r=await fetch('/api/status',{cache:'no-store'});
+   const j=await r.json();
+   backendReady=!!j.ready;
+   if(j.ready){
+     box.className='statusbar ok';
+     box.textContent=`AI connected · ${j.model} · V${j.version}`;
+   }else{
+     box.className='statusbar bad';
+     box.textContent='Backend is running, but no OpenAI API key is configured. Restart with start.command and enter your API key.';
+   }
+ }catch(e){
+   backendReady=false;
+   box.className='statusbar bad';
+   box.textContent='Backend disconnected. Keep the Terminal window from start.command open and reload this localhost page.';
+ }
+}
+document.getElementById('menuFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{imageDataURL=await resizeImage(f,2400,.92);const img=document.getElementById('preview');img.src=imageDataURL;img.style.display='block';document.getElementById('uploadPrompt').style.display='none';hideError()}catch(err){showError('Could not read this image. Try JPG or PNG.')}})
+function resizeImage(file,maxSide,quality){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onerror=reject;img.onload=()=>{let w=img.width,h=img.height,s=Math.min(1,maxSide/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality))};img.src=r.result};r.readAsDataURL(file)})}
+function showError(m){const b=document.getElementById('scanError');b.style.display='block';b.textContent=m}function hideError(){document.getElementById('scanError').style.display='none'}
+async function analyzeMenu(){
+ hideError();
+ if(location.protocol==='file:' || !backendReady){
+   showError('AI backend is not connected. Close this page, double-click start.command, keep Terminal open, and use the localhost page that opens automatically.');
+   return;
+ }
+ if(!imageDataURL){
+   showError('Please upload an actual menu image first — not a screenshot of the Finder file list.');
+   return;
+ }
+ currentProfile=collectProfile();go('loading');animateProgress();
+ try{const r=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:currentProfile,image_data_url:imageDataURL})});const j=await r.json();if(!r.ok)throw new Error(j.error||'AI analysis failed');currentAnalysis=j.analysis;renderResults();go('results')}catch(e){
+ go('scan');
+ const msg=e && e.message ? e.message : String(e);
+ if(msg==='Failed to fetch'){
+   backendReady=false;
+   showError('Connection to the local AI backend was lost. Keep start.command / Terminal running, then reload the localhost page. Do not open index.html directly.');
+ }else{
+   showError(msg);
+ }
+}}
+function animateProgress(){['p1','p2','p3','p4'].forEach(id=>document.getElementById(id).classList.remove('active'));['p1','p2','p3','p4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('active'),i*1000))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function emoji(course){return({Appetizer:'🥟',Main:'🍽️',Side:'🥗',Drink:'🥤',Dessert:'🍰',Other:'✨'})[course]||'🍽️'}
+function renderResults(){
+ document.getElementById('resultPreview').src=imageDataURL;
+ const ext=currentAnalysis.extracted_menu,rec=currentAnalysis.recommendation;
+ document.getElementById('overall').textContent=rec.overall_note||'';
+ const host=document.getElementById('resultCards');host.innerHTML='';
+ (rec.recommended_meal||[]).forEach((d,i)=>{
+  const card=document.createElement('div');card.className='card dish';card.onclick=()=>showDetail(i);
+  card.innerHTML=`<div class="mealLabel">${emoji(d.course)} ${esc(d.course_label_in_user_language||d.course)}</div><div class="top"><div class="rank">${esc(d.rank||i+1)}</div><div style="flex:1"><div class="title">${esc(d.name_in_user_language)}</div><div class="original">${esc(d.original_name)} · ${esc(d.price)}</div></div></div><span class="badge ${esc(d.confidence)}">${esc(d.confidence)} confidence</span><span class="badge">${esc(d.category)}</span><div class="alert good"><b>Why:</b> ${esc(d.why_recommended)}</div><div class="alert warn"><b>Allergen check:</b> ${esc(d.allergen_assessment)}</div>`;
+  host.appendChild(card)
+ });
+ const read=document.getElementById('menuRead');read.innerHTML=`<p class="tiny"><b>${esc(ext.menu_title||'Uploaded menu')}</b> · detected language: ${esc(ext.menu_language)}</p>`;
+ (ext.items||[]).forEach(x=>{const div=document.createElement('div');div.className='readItem';div.innerHTML=`<div class="readName">${esc(x.original_name)} ${x.price?'· '+esc(x.price):''}</div><div class="tiny">${esc(x.translated_name)}${x.section?' · '+esc(x.section):''} · ${esc(x.confidence)} confidence</div>`;read.appendChild(div)});
+ const risk=document.getElementById('riskNotes');risk.innerHTML='';const ul=document.createElement('ul');ul.className='list';[...(ext.extraction_warnings||[]),...(rec.high_risk_notes||[]),...(rec.source_limitations||[])].forEach(x=>{const li=document.createElement('li');li.textContent=x;ul.appendChild(li)});risk.appendChild(ul)
+}
+function showDetail(i){const d=currentAnalysis.recommendation.recommended_meal[i];document.getElementById('detailBody').innerHTML=`<div style="font-size:54px">${emoji(d.course)}</div><div class="mealLabel">${esc(d.course_label_in_user_language||d.course)}</div><h1>${esc(d.name_in_user_language)}</h1><p class="muted">${esc(d.original_name)} · ${esc(d.price)}</p><div class="card"><h3>Why AI selected it</h3><p>${esc(d.why_recommended)}</p><p><b>Category:</b> ${esc(d.category)}</p><p><b>Confidence:</b> ${esc(d.confidence)}</p></div><div class="alert warn"><b>Allergen assessment:</b> ${esc(d.allergen_assessment)}</div><div class="alert warn"><b>General health consideration:</b> ${esc(d.health_consideration)}</div><div class="card"><h3>Ask restaurant staff</h3><p>${esc(d.staff_question)}</p></div><p class="notice">Never rely on image analysis alone for severe allergy safety.</p>`;go('detail')}
+function openChat(){const log=document.getElementById('chatlog');log.innerHTML='';const b=document.createElement('div');b.className='bubble ai';b.textContent=`Ask me about the menu you uploaded. I’ll answer in ${currentProfile?.mother_language||'your selected language'}.`;log.appendChild(b);go('chat')}
+async function sendChat(){const input=document.getElementById('chatInput'),q=input.value.trim();if(!q)return;const log=document.getElementById('chatlog');const u=document.createElement('div');u.className='bubble user';u.textContent=q;log.appendChild(u);input.value='';const a=document.createElement('div');a.className='bubble ai';a.textContent='…';log.appendChild(a);try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:currentProfile,analysis:currentAnalysis,question:q})});const j=await r.json();if(!r.ok)throw new Error(j.error||'Chat failed');a.textContent=j.answer}catch(e){a.textContent='Error: '+e.message}window.scrollTo(0,document.body.scrollHeight)}
+makeEditors();checkAPI();
+</script>
+</body>
+</html>
